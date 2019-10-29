@@ -1,9 +1,14 @@
 <template>
   <section>
-    <article v-for="armSale in armSales" :key="armSale.id">
-      <div v-if="armSale['2018-2018']">
-        <h2>{{ armSale.Supplier }}</h2>
-        <div>Has sold over {{ armSale["2018-2018"] }} millions of dollars worth of weapons in 2018</div>
+    <div v-if="isLoading">
+      <img src="../assets/puff.svg" />
+    </div>
+    <article v-if="!isLoading">
+      <div v-for="armSale in armSales" :key="armSale.id">
+        <div v-if="isArmSaleValid(armSale['2018-2018'])">
+          <h2>{{ armSale.Supplier }}</h2>
+          <div>Has sold over {{ armSale["2018-2018"] }} millions of dollars worth of weapons in 2018</div>
+        </div>
       </div>
     </article>
   </section>
@@ -12,6 +17,8 @@
 <script>
 import getArmsSsales from "../services/getArmsSales";
 
+const isArmSaleValid = x => x !== "" && x !== "0";
+
 export default {
   name: 'HelloWorld',
   props: {
@@ -19,13 +26,17 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
-      armSales: []
+      isLoading: true,
+      armSales: [],
+      isArmSaleValid: isArmSaleValid,
     }
   },
   created() {
     getArmsSsales()
-      .then(x => this.armSales = x)
+      .then(x => {
+        this.armSales = x;
+        this.isLoading = false;
+      });
   }
 }
 </script>
