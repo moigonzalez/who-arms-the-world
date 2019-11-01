@@ -29,12 +29,14 @@ export default {
     }
   },
   created() {
-    getArmsSsales()
-      .then(x => {
-        this.armSales = x;
-        this.isLoading = false;
-      });
-  }
+    if (typeof window !== "undefined") {
+      getArmsSsales()
+        .then(x => {
+          this.armSales = x;
+          this.isLoading = false;
+        });
+      }
+    }
 }
 </script>
 
