@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <section class="container">
     <div v-if="isLoading">
-      <img src="../assets/puff.svg" />
+      <g-image alt="Loader" src="~/assets/puff.svg" />
     </div>
     <article v-if="!isLoading">
       <div v-for="armSale in armSales" :key="armSale.id">
@@ -21,9 +21,6 @@ const isArmSaleValid = x => x !== "" && x !== "0";
 
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
-  },
   data() {
     return {
       isLoading: true,
@@ -43,6 +40,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  text-align: center;
+}
 h3 {
   margin: 40px 0 0;
 }

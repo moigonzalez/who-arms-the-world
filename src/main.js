@@ -1,8 +1,9 @@
-import Vue from 'vue'
-import App from './App.vue'
+// This is the main.js file. Import global CSS and scripts here.
+// The Client API can be used here. Learn more: gridsome.org/docs/client-api
 
-Vue.config.productionTip = false
+import DefaultLayout from '~/layouts/Default.vue'
 
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+export default function (Vue, { router, head, isClient }) {
+  // Set default layout as a global component
+  Vue.component('Layout', DefaultLayout)
+}
