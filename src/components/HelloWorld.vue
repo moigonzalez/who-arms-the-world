@@ -1,21 +1,46 @@
 <template>
   <section class="container">
-    <div v-if="isLoading">
-      <g-image alt="Loader" src="~/assets/puff.svg" />
-    </div>
-    <article v-if="!isLoading">
-      <div v-for="armSale in armSales" :key="armSale.id">
-        <div v-if="isArmSaleValid(armSale['2018-2018'])">
-          <h2>{{ armSale.Supplier }}</h2>
-          <div>Has sold over {{ armSale["2018-2018"] }} millions of dollars worth of weapons in 2018</div>
+    <!-- <article>
+      <div v-for="edge in $static.armSales.edges" :key="edge.node.id">
+        <div v-if="isArmSaleValid(edge.node.data)">
+          <h2>{{ edge.node.supplier }}</h2>
+          <div>Has sold over {{ edge.node.data }} millions of dollars worth of weapons in 2018</div>
+          <div v-if="edge.node.country !== null">
+            {{edge.node.country.latitude}}
+            {{edge.node.country.longitude}}
+          </div>
         </div>
       </div>
-    </article>
+    </article> -->
+
   </section>
 </template>
 
+<static-query>
+query {
+  armSales: allArmSales {
+    edges {
+      node {
+        data
+        supplier
+        country {
+          latitude
+          longitude
+          name
+        }
+      }
+    }
+  }
+}
+</static-query>
+
 <script>
-import getArmsSsales from "../services/getArmsSales";
+import * as d3 from 'd3';
+import { feature } from "topojson-client"
+import { geoMercator, geoPath } from "d3-geo"
+const topojson = require("topojson-client");
+import getArmSsales from "../services/getArmSales";
+import * as world from '../assets/world-110m2.json';
 
 const isArmSaleValid = x => x !== "" && x !== "0";
 
@@ -23,20 +48,39 @@ export default {
   name: 'HelloWorld',
   data() {
     return {
-      isLoading: true,
-      armSales: [],
       isArmSaleValid: isArmSaleValid,
     }
   },
-  created() {
-    if (typeof window !== "undefined") {
-      getArmsSsales()
-        .then(x => {
-          this.armSales = x;
-          this.isLoading = false;
-        });
-      }
-    }
+  mounted() {
+    console.log(this.$static);
+
+    const projection = () =>
+      geoMercator()
+        .scale(100)
+        .translate([ 800 / 2, 450 / 2 ]);
+    const width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+    var path = geoPath().projection(projection());
+
+    const svg = d3.select(this.$el)
+                  .append("svg")
+                  .style("cursor", "move")
+                  .attr("viewBox", "50 10 " + width + " " + height)
+                  .attr("preserveAspectRatio", "xMinYMin");
+
+    var g = svg.append("g");
+
+    var features = topojson.feature(world.default, world.default.objects.countries).features;
+
+    console.log(features);
+
+    svg.append("g")
+        .selectAll("path")
+        .data(features)
+        .enter().append("path")
+        .attr("d", path)
+  }
 }
 </script>
 
@@ -44,19 +88,5 @@ export default {
 <style scoped>
 .container {
   text-align: center;
-}
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
 }
 </style>

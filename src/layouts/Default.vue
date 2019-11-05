@@ -1,7 +1,6 @@
 <template>
   <div class="layout">
     <header class="header">
-      <h1>Who arms the world?</h1>
     </header>
     <slot/>
   </div>
