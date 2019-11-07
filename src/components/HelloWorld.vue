@@ -1,19 +1,5 @@
 <template>
-  <section class="container">
-    <!-- <article>
-      <div v-for="edge in $static.armSales.edges" :key="edge.node.id">
-        <div v-if="isArmSaleValid(edge.node.data)">
-          <h2>{{ edge.node.supplier }}</h2>
-          <div>Has sold over {{ edge.node.data }} millions of dollars worth of weapons in 2018</div>
-          <div v-if="edge.node.country !== null">
-            {{edge.node.country.latitude}}
-            {{edge.node.country.longitude}}
-          </div>
-        </div>
-      </div>
-    </article> -->
-
-  </section>
+  <section class="container"></section>
 </template>
 
 <static-query>
@@ -36,11 +22,10 @@ query {
 
 <script>
 import * as d3 from 'd3';
-import { feature } from "topojson-client"
-import { geoMercator, geoPath } from "d3-geo"
-const topojson = require("topojson-client");
-import getArmSsales from "../services/getArmSales";
 import * as world from '../assets/world-110m2.json';
+import { geoMercator, geoPath } from "d3-geo"
+
+const topojson = require("topojson-client");
 
 const isArmSaleValid = x => x !== "" && x !== "0";
 
@@ -52,14 +37,15 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$static);
+    const armSales = this.$static.armSales.edges;
+
+    const width = Math.max(this.$el.clientWidth || 0);
+    const height = Math.max(this.$el.clientHeight || 0);
 
     const projection = () =>
       geoMercator()
-        .scale(100)
-        .translate([ 800 / 2, 450 / 2 ]);
-    const width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        .scale(150)
+        .translate([ width / 2, height / 2 ]);
 
     var path = geoPath().projection(projection());
 
@@ -69,17 +55,42 @@ export default {
                   .attr("viewBox", "50 10 " + width + " " + height)
                   .attr("preserveAspectRatio", "xMinYMin");
 
-    var g = svg.append("g");
-
-    var features = topojson.feature(world.default, world.default.objects.countries).features;
-
-    console.log(features);
+    const features = topojson.feature(world.default, world.default.objects.countries).features;
 
     svg.append("g")
-        .selectAll("path")
+        .selectAll('path')
         .data(features)
-        .enter().append("path")
-        .attr("d", path)
+        .enter()
+        .append('path')
+        .attr('class', 'country')
+        .attr('id', d => `country_${d.id}`)
+        .on('mouseenter', d => {
+          d3.select(`#country_${d.id}`).classed('country_hovered', true);
+        })
+        .on('mouseout', d => {
+          d3.select(`#country_${d.id}`).classed('country_hovered', false);
+        })
+        .attr("d", path);
+
+    armSales.forEach(x => {
+      if (x.node.country === null || x.node.data === '') {
+        return;
+      }
+      svg.append('circle')
+        .attr("cx", projection()([x.node.country.longitude, x.node.country.latitude])[0])
+        .attr("cy", projection()([x.node.country.longitude, x.node.country.latitude])[1])
+        .attr('title', x.node.supplier)
+        .attr("r", x.node.data / 350)
+        .style('stroke', 'yellow')
+        .style('fill', 'red');
+
+      svg.append('text')
+        .attr("dx", projection()([x.node.country.longitude, x.node.country.latitude])[0])
+        .attr("dy", projection()([x.node.country.longitude, x.node.country.latitude])[1])
+        .text(`${x.node.supplier}${x.node.data}`)
+        .style('color', 'white');
+
+    })
   }
 }
 </script>
@@ -88,5 +99,13 @@ export default {
 <style scoped>
 .container {
   text-align: center;
+  width: 100%;
+  height: calc(100vh - 120px);
 }
 </style>
+
+<style>
+.country_hovered {
+  fill: green;
+}
+</style>>
