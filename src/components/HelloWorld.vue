@@ -38,64 +38,96 @@ export default {
   },
   mounted() {
     const armSales = this.$static.armSales.edges;
+    let centered;
 
     const width = Math.max(this.$el.clientWidth || 0);
     const height = Math.max(this.$el.clientHeight || 0);
 
-    const projection = () =>
-      geoMercator()
+    const zoom = d3
+                  .zoom()
+                  .on("zoom", zoomHandler);
+              function zoomHandler() {
+                g.attr("transform", d3.event.transform);
+              }
+
+    function clicked(d) {
+      var x, y, k;
+
+      if (d && centered !== d) {
+        var centroid = path.centroid(d);
+        x = centroid[0];
+        y = centroid[1];
+        k = 4;
+        centered = d;
+      } else {
+        x = width / 2;
+        y = height / 2;
+        k = 1;
+        centered = null;
+      }
+
+      g.selectAll("path")
+          .classed("active", centered && function(d) { return d === centered; });
+
+      g.transition()
+          .duration(750)
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+          .style("stroke-width", 1.5 / k + "px");
+    }
+
+    const projection = geoMercator()
         .scale(150)
         .translate([ width / 2, height / 2 ]);
 
-    var path = geoPath().projection(projection());
+    var path = geoPath().projection(projection);
 
     const svg = d3.select(this.$el)
                   .append("svg")
-                  .style("cursor", "move")
                   .attr("viewBox", "50 10 " + width + " " + height)
-                  .attr("preserveAspectRatio", "xMinYMin");
+                  .attr("preserveAspectRatio", "xMinYMin")
 
     const features = topojson.feature(world.default, world.default.objects.countries).features;
 
-    svg.append("g")
-        .selectAll('path')
-        .data(features)
-        .enter()
-        .append('path')
-        .attr('class', 'country')
-        .attr('id', d => `country_${d.id}`)
-        .on('mouseenter', d => {
-          d3.select(`#country_${d.id}`).classed('country_hovered', true);
-        })
-        .on('mouseout', d => {
-          d3.select(`#country_${d.id}`).classed('country_hovered', false);
-        })
-        .attr("d", path);
+    const g = svg.call(zoom).append("g");
+
+    g.selectAll('path')
+      .data(features)
+      .enter()
+      .append('path')
+      .attr('class', 'country')
+      .attr('id', d => `country_${d.id}`)
+      .on('mouseenter', d => {
+        d3.select(`#country_${d.id}`).classed('country_hovered', true);
+      })
+      .on('mouseout', d => {
+        d3.select(`#country_${d.id}`).classed('country_hovered', false);
+      })
+            .on("click", clicked)
+      .attr("d", path);
 
     armSales.forEach(x => {
       if (x.node.country === null || x.node.data === '') {
         return;
       }
-      svg.append('circle')
-        .attr("cx", projection()([x.node.country.longitude, x.node.country.latitude])[0])
-        .attr("cy", projection()([x.node.country.longitude, x.node.country.latitude])[1])
+
+      g.append('circle')
+        .attr("cx", projection([x.node.country.longitude, x.node.country.latitude])[0])
+        .attr("cy", projection([x.node.country.longitude, x.node.country.latitude])[1])
         .attr('title', x.node.supplier)
-        .attr("r", x.node.data / 350)
+        .attr("r", x.node.data / 300)
         .style('stroke', 'yellow')
         .style('fill', 'red');
 
-      svg.append('text')
-        .attr("dx", projection()([x.node.country.longitude, x.node.country.latitude])[0])
-        .attr("dy", projection()([x.node.country.longitude, x.node.country.latitude])[1])
+      g.append('text')
+        .attr("dx", projection([x.node.country.longitude, x.node.country.latitude])[0])
+        .attr("dy", projection([x.node.country.longitude, x.node.country.latitude])[1])
         .text(`${x.node.supplier}${x.node.data}`)
         .style('color', 'white');
-
     })
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .container {
   text-align: center;
