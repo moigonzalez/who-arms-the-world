@@ -1,5 +1,5 @@
 <template>
-  <section class="container"></section>
+  <section id="map" class="container"></section>
 </template>
 
 <static-query>
@@ -30,7 +30,7 @@ const topojson = require("topojson-client");
 const isArmSaleValid = x => x !== "" && x !== "0";
 
 export default {
-  name: 'HelloWorld',
+  name: 'Map',
   data() {
     return {
       isArmSaleValid: isArmSaleValid,
@@ -43,14 +43,7 @@ export default {
     const width = Math.max(this.$el.clientWidth || 0);
     const height = Math.max(this.$el.clientHeight || 0);
 
-    const zoom = d3
-                  .zoom()
-                  .on("zoom", zoomHandler);
-              function zoomHandler() {
-                g.attr("transform", d3.event.transform);
-              }
-
-    function clicked(d) {
+    const clicked = (d) => {
       var x, y, k;
 
       if (d && centered !== d) {
@@ -76,10 +69,10 @@ export default {
     }
 
     const projection = geoMercator()
-        .scale(150)
-        .translate([ width / 2, height / 2 ]);
+        .scale(200)
+        .translate([ width / 2, height / 1.4 ]);
 
-    var path = geoPath().projection(projection);
+    let path = geoPath().projection(projection);
 
     const svg = d3.select(this.$el)
                   .append("svg")
@@ -88,7 +81,7 @@ export default {
 
     const features = topojson.feature(world.default, world.default.objects.countries).features;
 
-    const g = svg.call(zoom).append("g");
+    const g = svg.append("g");
 
     g.selectAll('path')
       .data(features)
@@ -102,7 +95,7 @@ export default {
       .on('mouseout', d => {
         d3.select(`#country_${d.id}`).classed('country_hovered', false);
       })
-            .on("click", clicked)
+      .on("click", clicked)
       .attr("d", path);
 
     armSales.forEach(x => {
@@ -114,15 +107,16 @@ export default {
         .attr("cx", projection([x.node.country.longitude, x.node.country.latitude])[0])
         .attr("cy", projection([x.node.country.longitude, x.node.country.latitude])[1])
         .attr('title', x.node.supplier)
-        .attr("r", x.node.data / 300)
+        .attr("r", x.node.data / 200)
         .style('stroke', 'yellow')
+        .style('pointer-events', 'none')
         .style('fill', 'red');
 
-      g.append('text')
-        .attr("dx", projection([x.node.country.longitude, x.node.country.latitude])[0])
-        .attr("dy", projection([x.node.country.longitude, x.node.country.latitude])[1])
-        .text(`${x.node.supplier}${x.node.data}`)
-        .style('color', 'white');
+      // g.append('text')
+      //   .attr("dx", projection([x.node.country.longitude, x.node.country.latitude])[0])
+      //   .attr("dy", projection([x.node.country.longitude, x.node.country.latitude])[1])
+      //   .text(`${x.node.supplier}${x.node.data}`)
+      //   .style('color', 'white');
     })
   }
 }
@@ -132,12 +126,15 @@ export default {
 .container {
   text-align: center;
   width: 100%;
-  height: calc(100vh - 120px);
+  height: 100vh;
 }
 </style>
 
 <style>
 .country_hovered {
   fill: green;
+}
+.country:hover {
+  cursor: pointer;
 }
 </style>>

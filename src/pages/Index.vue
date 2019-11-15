@@ -1,21 +1,21 @@
 <template>
   <Layout>
     <Intro />
-    <HelloWorld />
+    <Map />
   </Layout>
 </template>
 
 <script>
 import Intro from '../components/Intro';
-import HelloWorld from "../components/HelloWorld";
+import Map from "../components/Map";
 
 export default {
   metaInfo: {
-    title: 'Hello, world!'
+    title: 'WHO ARMS THE WORLD?'
   },
   components: {
     Intro,
-    HelloWorld
+    Map
   },
 }
 
