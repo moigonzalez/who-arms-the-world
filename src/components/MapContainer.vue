@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Map :armSales="this.armSales" v-on:setCurrentCountry="onCountryClick" />
+    <Map v-on:setCurrentCountry="onCountryClick" />
     <Sidebar :armSales="this.armSales" />
   </div>
 </template>

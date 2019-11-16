@@ -12,9 +12,7 @@ const topojson = require("topojson-client");
 export default {
   name: 'Map',
   mounted() {
-    const armSales = this.$parent.$static.armSales.edges;;
-    let centered;
-
+    const armSales = this.$parent.$static.armSales.edges;
     const el = this.$el;
     const width = Math.max(el.clientWidth || 0);
     const height = Math.max(el.clientHeight || 0);
