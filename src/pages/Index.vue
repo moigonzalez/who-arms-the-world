@@ -1,13 +1,13 @@
 <template>
   <Layout>
     <Intro />
-    <Map />
+    <MapContainer />
   </Layout>
 </template>
 
 <script>
 import Intro from '../components/Intro';
-import Map from "../components/Map";
+import MapContainer from "../components/MapContainer";
 
 export default {
   metaInfo: {
@@ -15,7 +15,7 @@ export default {
   },
   components: {
     Intro,
-    Map
+    MapContainer
   },
 }
 

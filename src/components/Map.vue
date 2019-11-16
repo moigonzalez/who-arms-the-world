@@ -1,76 +1,35 @@
 <template>
-  <section id="map" class="container"></section>
+  <section id="map" class="container map"></section>
 </template>
-
-<static-query>
-query {
-  armSales: allArmSales {
-    edges {
-      node {
-        data
-        supplier
-        country {
-          latitude
-          longitude
-          name
-        }
-      }
-    }
-  }
-}
-</static-query>
 
 <script>
 import * as d3 from 'd3';
 import * as world from '../assets/world-110m2.json';
-import { geoMercator, geoPath } from "d3-geo"
+import { geoMercator, geoPath } from 'd3-geo';
 
 const topojson = require("topojson-client");
 
-const isArmSaleValid = x => x !== "" && x !== "0";
-
 export default {
   name: 'Map',
-  data() {
-    return {
-      isArmSaleValid: isArmSaleValid,
-    }
-  },
   mounted() {
-    const armSales = this.$static.armSales.edges;
+    const armSales = this.$parent.$static.armSales.edges;;
     let centered;
 
-    const width = Math.max(this.$el.clientWidth || 0);
-    const height = Math.max(this.$el.clientHeight || 0);
-
-    const clicked = (d) => {
-      var x, y, k;
-
-      if (d && centered !== d) {
-        var centroid = path.centroid(d);
-        x = centroid[0];
-        y = centroid[1];
-        k = 4;
-        centered = d;
-      } else {
-        x = width / 2;
-        y = height / 2;
-        k = 1;
-        centered = null;
-      }
-
-      g.selectAll("path")
-          .classed("active", centered && function(d) { return d === centered; });
-
-      g.transition()
-          .duration(750)
-          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-          .style("stroke-width", 1.5 / k + "px");
-    }
+    const el = this.$el;
+    const width = Math.max(el.clientWidth || 0);
+    const height = Math.max(el.clientHeight || 0);
 
     const projection = geoMercator()
         .scale(200)
         .translate([ width / 2, height / 1.4 ]);
+
+    const zoom = d3
+                  .zoom()
+                  .on("zoom", zoomHandler);
+
+    function zoomHandler() {
+      g.attr("transform", d3.event.transform);
+    }
 
     let path = geoPath().projection(projection);
 
@@ -81,7 +40,7 @@ export default {
 
     const features = topojson.feature(world.default, world.default.objects.countries).features;
 
-    const g = svg.append("g");
+    const g = svg.call(zoom).append("g");
 
     g.selectAll('path')
       .data(features)
@@ -89,13 +48,6 @@ export default {
       .append('path')
       .attr('class', 'country')
       .attr('id', d => `country_${d.id}`)
-      .on('mouseenter', d => {
-        d3.select(`#country_${d.id}`).classed('country_hovered', true);
-      })
-      .on('mouseout', d => {
-        d3.select(`#country_${d.id}`).classed('country_hovered', false);
-      })
-      .on("click", clicked)
       .attr("d", path);
 
     armSales.forEach(x => {
@@ -103,21 +55,28 @@ export default {
         return;
       }
 
+      const id = x.node.supplier.toLowerCase().split(' ').join('-');
+
       g.append('circle')
         .attr("cx", projection([x.node.country.longitude, x.node.country.latitude])[0])
         .attr("cy", projection([x.node.country.longitude, x.node.country.latitude])[1])
         .attr('title', x.node.supplier)
-        .attr("r", x.node.data / 200)
-        .style('stroke', 'yellow')
-        .style('pointer-events', 'none')
-        .style('fill', 'red');
-
-      // g.append('text')
-      //   .attr("dx", projection([x.node.country.longitude, x.node.country.latitude])[0])
-      //   .attr("dy", projection([x.node.country.longitude, x.node.country.latitude])[1])
-      //   .text(`${x.node.supplier}${x.node.data}`)
-      //   .style('color', 'white');
+        .attr("r", x.node.data / 180)
+        .attr('id', d => `circle_${id}`)
+        .attr('class', 'circle')
+        .on('mouseenter', () => d3.select(`#circle_${id}`).classed('circle_hovered', true))
+        .on('mouseout', () => d3.select(`#circle_${id}`).classed('circle_hovered', false))
+        .on('click', () => {
+          d3.select('.circle_active').classed('circle_active', false);
+          d3.select(`#circle_${id}`).classed('circle_active', true);
+          this.setCurrentCountry(x.node);
+        })
     })
+  },
+  methods: {
+    setCurrentCountry(val) {
+      this.$emit('setCurrentCountry', val);
+    }
   }
 }
 </script>
@@ -125,16 +84,22 @@ export default {
 <style scoped>
 .container {
   text-align: center;
-  width: 100%;
+  width: 80%;
   height: 100vh;
 }
 </style>
 
 <style>
-.country_hovered {
+.circle {
+  fill: red;
+}
+.circle_hovered {
   fill: green;
 }
-.country:hover {
+.circle:hover {
   cursor: pointer;
+}
+.circle_active {
+  fill: blue;
 }
 </style>>
