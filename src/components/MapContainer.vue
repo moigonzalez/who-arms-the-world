@@ -44,11 +44,6 @@ export default {
     this.armSales = this.$static.armSales.edges;
     this.isLoading = false;
   },
-  methods: {
-    scrollToBottom() {
-
-    }
-  }
 }
 </script>
 
