@@ -28,23 +28,6 @@ const getArmSales = async (api) => {
   });
 }
 
-// const getCountryData = (api) => {
-//   const GSON = "https://gson.fayazara.now.sh/?url=";
-
-//   api.loadSource(async ({ addCollection }) => {
-//     const { data } = await axios(`${GSON}${GOOGLE_SHEETS_URL}`);
-//     const collection = addCollection('CountryData');
-
-//     data.forEach(el => {
-//       collection.addNode({
-//         name: el.name,
-//         latitude: el.latitude,
-//         longitude: el.longitude,
-//       })
-//     });
-//   });
-// }
-
 module.exports = function (api) {
   getArmSales(api);
 

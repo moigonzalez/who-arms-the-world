@@ -1,5 +1,6 @@
 <template>
   <section id="sources" class="container">
+    <h1>"War is Peace, Freedom is Slavery, Ignorance is Strength"</h1>
     <div class="wrapper">
       <h1>Sources</h1>
       <p>Data comes from the Stockholm International Peace Research Institute (SIPRI)</p>
@@ -29,8 +30,9 @@ export default {
 .container {
   height: 100vh;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 .wrapper {
   text-align: center;
