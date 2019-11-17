@@ -2,12 +2,14 @@
   <Layout>
     <Intro />
     <MapContainer />
+    <Sources />
   </Layout>
 </template>
 
 <script>
 import Intro from '../components/Intro';
 import MapContainer from "../components/MapContainer";
+import Sources from '../components/Sources';
 
 export default {
   metaInfo: {
@@ -15,7 +17,8 @@ export default {
   },
   components: {
     Intro,
-    MapContainer
+    MapContainer,
+    Sources
   },
 }
 

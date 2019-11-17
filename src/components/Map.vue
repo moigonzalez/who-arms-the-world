@@ -101,16 +101,18 @@ export default {
 
 <style>
 .circle {
-  fill: red;
+  fill: #cc2800;
+  stroke: #881b00;
   cursor: pointer;
+  transition: 0.2s ease-in-out fill;
 }
 .circle_hovered {
-  fill: green;
+  fill: #ff3200;
 }
 .circle:hover {
   cursor: pointer;
 }
 .circle_active {
-  fill: blue;
+  fill: #881b00;
 }
 </style>
