@@ -1,7 +1,10 @@
 <template>
   <ol id="sidebar" class="container">
     <li v-for="x in armSales" v-bind:key="x.supplier">
-      <div class="sidebar__item">
+      <div v-bind:id="transformNameToId(x.node.supplier)"
+          v-bind:class="{active: activeCountry.id === transformNameToId(x.node.supplier)}"
+          @click="setActiveCountry({...x.node, id: transformNameToId(x.node.supplier)})"
+          class="sidebar__item">
         {{ x.node.supplier }}
       </div>
     </li>
@@ -9,6 +12,7 @@
 </template>
 
 <script>
+import transformNameToId from '../services/transformNameToId';
 
 const isArmSaleValid = ({ data, supplier }) => {
   const isNotEmpty = data !== "" && data !== "0";
@@ -18,12 +22,27 @@ const isArmSaleValid = ({ data, supplier }) => {
 
 export default {
   name: 'Sidebar',
-  props: ['active-country'],
+  computed: {
+    activeCountry () {
+	    return this.$store.state.activeCountry
+    }
+  },
   data() {
     return {
       armSales: this.$parent.$static.armSales.edges.filter(x => isArmSaleValid(x.node)),
+      transformNameToId,
     }
   },
+  methods: {
+    setActiveCountry(payload) {
+      this.$store.commit('setActiveCountry', payload)
+    }
+  },
+  watch: {
+    activeCountry (country) {
+      this.$el.querySelector(`#${country.id}`).scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }
 </script>
 
@@ -49,6 +68,7 @@ export default {
   border: solid 1px black;
   cursor: pointer;
 }
+.sidebar__item.active,
 .sidebar__item:hover {
   color: white;
   background: black;

@@ -15,7 +15,6 @@ export default function (Vue, { router, head, isClient, appOptions }) {
     },
     mutations: {
       setActiveCountry (state, payload) {
-        console.log('setting active country', payload);
         state.activeCountry = payload;
       }
     }

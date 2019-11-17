@@ -6,6 +6,7 @@
 import * as d3 from 'd3';
 import * as world from '../assets/world-110m2.json';
 import { geoMercator, geoPath } from 'd3-geo';
+import transformNameToId from '../services/transformNameToId';
 
 const topojson = require("topojson-client");
 
@@ -58,27 +59,31 @@ export default {
         return;
       }
 
-      const id = x.node.supplier.toLowerCase().split(' ').join('-');
+      const id = transformNameToId(x.node.supplier);
 
       g.append('circle')
         .attr("cx", projection([x.node.country.longitude, x.node.country.latitude])[0])
         .attr("cy", projection([x.node.country.longitude, x.node.country.latitude])[1])
         .attr('title', x.node.supplier)
-        .attr("r", x.node.data / 180)
+        .attr("r", x.node.data / 140)
         .attr('id', d => `circle_${id}`)
         .attr('class', 'circle')
         .on('mouseenter', () => d3.select(`#circle_${id}`).classed('circle_hovered', true))
         .on('mouseout', () => d3.select(`#circle_${id}`).classed('circle_hovered', false))
         .on('click', () => {
-          d3.select('.circle_active').classed('circle_active', false);
-          d3.select(`#circle_${id}`).classed('circle_active', true);
-          this.setActiveCountry(x.node);
+          this.setActiveCountry({...x.node, id});
         })
     })
   },
   methods: {
     setActiveCountry(payload) {
       this.$store.commit('setActiveCountry', payload)
+    }
+  },
+  watch: {
+    activeCountry (country) {
+      d3.select('.circle_active').classed('circle_active', false);
+      d3.select(`#circle_${country.id}`).classed('circle_active', true);
     }
   }
 }
@@ -89,6 +94,7 @@ export default {
   text-align: center;
   width: 75%;
   height: 100vh;
+  overflow: hidden;
 }
 </style>
 
