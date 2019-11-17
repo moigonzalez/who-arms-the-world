@@ -11,7 +11,7 @@ import MapContainer from "../components/MapContainer";
 
 export default {
   metaInfo: {
-    title: 'WHO ARMS THE WORLD?'
+    title: 'WHO ARMS THE WORLD?',
   },
   components: {
     Intro,

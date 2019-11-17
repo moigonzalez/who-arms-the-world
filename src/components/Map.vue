@@ -95,12 +95,14 @@ export default {
   width: 75%;
   height: 100vh;
   overflow: hidden;
+  cursor: move;
 }
 </style>
 
 <style>
 .circle {
   fill: red;
+  cursor: pointer;
 }
 .circle_hovered {
   fill: green;

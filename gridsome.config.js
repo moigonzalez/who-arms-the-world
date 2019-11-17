@@ -6,5 +6,6 @@
 
 module.exports = {
   siteName: 'Who Arms The World?',
+  siteDescription: 'Visualization of weapon exports by country',
   plugins: []
 }
