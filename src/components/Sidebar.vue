@@ -40,7 +40,7 @@ export default {
   },
   watch: {
     activeCountry (country) {
-      this.$el.querySelector(`#${country.id}`).scrollIntoView({ behavior: 'smooth' });
+      this.$el.querySelector(`#${country.id}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 }
