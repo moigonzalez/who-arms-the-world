@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <Map v-on:setCurrentCountry="onCountryClick" />
-    <Sidebar :armSales="this.armSales" />
+  <div class="sectionContainer">
+    <Map />
+    <Sidebar />
   </div>
 </template>
 
@@ -44,15 +44,11 @@ export default {
     this.armSales = this.$static.armSales.edges;
     this.isLoading = false;
   },
-  methods: {
-    onCountryClick (value) {
-      console.log(value);
-      this.activeCountry = value;
-    }
-  }
 }
 </script>
 
-<style>
-
+<style scoped>
+.sectionContainer {
+  display: flex;
+}
 </style>

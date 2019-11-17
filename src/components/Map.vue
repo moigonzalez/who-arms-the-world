@@ -11,6 +11,11 @@ const topojson = require("topojson-client");
 
 export default {
   name: 'Map',
+  computed: {
+    activeCountry () {
+	    return this.$store.state.activeCountry
+    }
+  },
   mounted() {
     const armSales = this.$parent.$static.armSales.edges;
     const el = this.$el;
@@ -67,13 +72,13 @@ export default {
         .on('click', () => {
           d3.select('.circle_active').classed('circle_active', false);
           d3.select(`#circle_${id}`).classed('circle_active', true);
-          this.setCurrentCountry(x.node);
+          this.setActiveCountry(x.node);
         })
     })
   },
   methods: {
-    setCurrentCountry(val) {
-      this.$emit('setCurrentCountry', val);
+    setActiveCountry(payload) {
+      this.$store.commit('setActiveCountry', payload)
     }
   }
 }
@@ -82,7 +87,7 @@ export default {
 <style scoped>
 .container {
   text-align: center;
-  width: 80%;
+  width: 75%;
   height: 100vh;
 }
 </style>
@@ -100,4 +105,4 @@ export default {
 .circle_active {
   fill: blue;
 }
-</style>>
+</style>
