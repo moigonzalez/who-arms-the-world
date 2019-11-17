@@ -32,6 +32,17 @@ export default {
   max-height: 100vh;
   overflow: auto;
   width: 25%;
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  counter-reset: sidebar;
+}
+.sidebar__item:before {
+  content: counter(sidebar);
+  counter-increment: sidebar;
+  background-color: black;
+  color: white;
+  padding: 5px 10px;
 }
 .sidebar__item {
   padding: 20px;
