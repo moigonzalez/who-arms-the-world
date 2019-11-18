@@ -1,5 +1,11 @@
 <template>
-  <section id="map" class="container map"></section>
+  <section id="map" class="container map">
+    <select @change="setActiveYear($event)">
+      <option v-for="y in armSalesYears" v-bind:key="y.id" v-bind:value="y.node.value">
+        {{ y.node.value.replace('_', '') }}
+      </option>
+    </select>
+  </section>
 </template>
 
 <script>
@@ -12,78 +18,105 @@ const topojson = require("topojson-client");
 
 export default {
   name: 'Map',
+  data() {
+    return {
+      armSales: this.$parent.$static.armSales.edges,
+      armSalesYears: this.$parent.$static.armSalesYears.edges
+    }
+  },
   computed: {
     activeCountry () {
 	    return this.$store.state.activeCountry
+    },
+    activeYear () {
+      return this.$store.state.activeYear
     }
   },
   mounted() {
-    const armSales = this.$parent.$static.armSales.edges;
-    const el = this.$el;
-    const width = Math.max(el.clientWidth || 0);
-    const height = Math.max(el.clientHeight || 0);
-
-    const projection = geoMercator()
-        .scale(200)
-        .translate([ width / 2, height / 1.4 ]);
-
-    const zoom = d3
-                  .zoom()
-                  .on("zoom", zoomHandler);
-
-    function zoomHandler() {
-      g.attr("transform", d3.event.transform);
-    }
-
-    let path = geoPath().projection(projection);
-
-    const svg = d3.select(this.$el)
-                  .append("svg")
-                  .attr("viewBox", "50 10 " + width + " " + height)
-                  .attr("preserveAspectRatio", "xMinYMin")
-
-    const features = topojson.feature(world.default, world.default.objects.countries).features;
-
-    const g = svg.call(zoom).append("g");
-
-    g.selectAll('path')
-      .data(features)
-      .enter()
-      .append('path')
-      .attr('class', 'country')
-      .attr('id', d => `country_${d.id}`)
-      .attr("d", path);
-
-    armSales.forEach(x => {
-      if (x.node.country === null || x.node.data === '') {
-        return;
-      }
-
-      const id = transformNameToId(x.node.supplier);
-
-      g.append('circle')
-        .attr("cx", projection([x.node.country.longitude, x.node.country.latitude])[0])
-        .attr("cy", projection([x.node.country.longitude, x.node.country.latitude])[1])
-        .attr('title', x.node.supplier)
-        .attr("r", x.node.data / 140)
-        .attr('id', d => `circle_${id}`)
-        .attr('class', 'circle')
-        .on('mouseenter', () => d3.select(`#circle_${id}`).classed('circle_hovered', true))
-        .on('mouseout', () => d3.select(`#circle_${id}`).classed('circle_hovered', false))
-        .on('click', () => {
-          this.setActiveCountry({...x.node, id});
-        })
-    })
+    this.initD3Map();
+    this.addMapLayers();
+    this.addMapCircles('data');
   },
   methods: {
     setActiveCountry(payload) {
       this.$store.commit('setActiveCountry', payload)
+    },
+    setActiveYear(event) {
+      this.$store.commit('setActiveYear', event.target.value)
+    },
+    initD3Map() {
+      const el = this.$el;
+      const width = Math.max(el.clientWidth || 0);
+      const height = Math.max(el.clientHeight || 0);
+
+      function zoomHandler() {
+        g.attr("transform", d3.event.transform);
+      }
+
+      this.projection = geoMercator()
+          .scale(200)
+          .translate([ width / 2, height / 1.4 ]);
+
+      const zoom = d3
+                    .zoom()
+                    .on("zoom", zoomHandler);
+
+      this.path = geoPath().projection(this.projection);
+
+      this.svg = d3.select(this.$el)
+                    .append("svg")
+                    .attr("viewBox", "50 10 " + width + " " + height)
+                    .attr("preserveAspectRatio", "xMinYMin");
+
+      this.g = this.svg.call(zoom).append("g");
+    },
+    addMapLayers() {
+      const features = topojson.feature(world.default, world.default.objects.countries).features;
+
+      this.g.selectAll('path')
+        .data(features)
+        .enter()
+        .append('path')
+        .attr('class', 'country')
+        .attr('id', d => `country_${d.id}`)
+        .attr("d", this.path);
+    },
+    addMapCircles(field) {
+      const armSales = this.$parent.$static.armSales.edges;
+
+      armSales.forEach(x => {
+        if (x.node.country === null || x.node[field] === '') {
+          return;
+        }
+
+        const id = transformNameToId(x.node.supplier);
+
+        this.g.append('circle')
+          .attr("cx", this.projection([x.node.country.longitude, x.node.country.latitude])[0])
+          .attr("cy", this.projection([x.node.country.longitude, x.node.country.latitude])[1])
+          .attr('title', x.node.supplier)
+          .attr("r", 0)
+          .attr('id', d => `circle_${id}`)
+          .attr('class', 'circle')
+          .on('mouseenter', () => d3.select(`#circle_${id}`).classed('circle_hovered', true))
+          .on('mouseout', () => d3.select(`#circle_${id}`).classed('circle_hovered', false))
+          .on('click', () => {
+            this.setActiveCountry({...x.node, id});
+          })
+          .transition()
+          .duration(1000)
+          .attr("r", x.node[field] / 140)
+      });
     }
   },
   watch: {
     activeCountry (country) {
       d3.select('.circle_active').classed('circle_active', false);
       d3.select(`#circle_${country.id}`).classed('circle_active', true);
+    },
+    activeYear (year) {
+      d3.selectAll('.circle').remove();
+      this.addMapCircles(year);
     }
   }
 }

@@ -10,6 +10,17 @@ query {
   armSales: allArmSales {
     edges {
       node {
+        id
+        _2010
+        _2011
+        _2012
+        _2013
+        _2014
+        _2015
+        _2016
+        _2017
+        _2018
+        _2010_2018
         data
         supplier
         country {
@@ -17,6 +28,13 @@ query {
           longitude
           name
         }
+      }
+    }
+  }
+  armSalesYears: allArmSalesYears {
+    edges {
+      node {
+        value
       }
     }
   }

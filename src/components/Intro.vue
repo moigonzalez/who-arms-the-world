@@ -21,8 +21,10 @@ export default {
   },
   mounted() {
     this.show = true;
+    document.body.classList.add('no-overflow');
     setTimeout(() => {
       document.getElementById("map").scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.body.classList.remove('no-overflow');
     }, 4000);
   }
 }
@@ -82,3 +84,8 @@ export default {
   }
 </style>
 
+<style>
+body.no-overflow {
+  overflow: hidden;
+}
+</style>

@@ -11,11 +11,15 @@ export default function (Vue, { router, head, isClient, appOptions }) {
 
   appOptions.store = new Vuex.Store({
     state: {
-      activeCountry: {}
+      activeCountry: {},
+      activeYear: '_2018',
     },
     mutations: {
       setActiveCountry (state, payload) {
         state.activeCountry = payload;
+      },
+      setActiveYear (state, payload) {
+        state.activeYear = payload;
       }
     }
   });

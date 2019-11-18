@@ -1,9 +1,11 @@
 <template>
-  <ol id="sidebar" class="container">
-    <li v-for="x in armSales" v-bind:key="x.supplier">
+  <ol id="sidebar" class="container show">
+    <li v-for="(x, index) in armSales"
+        v-bind:key="x.node.id">
       <div v-bind:id="transformNameToId(x.node.supplier)"
           v-bind:class="{active: activeCountry.id === transformNameToId(x.node.supplier)}"
           @click="setActiveCountry({...x.node, id: transformNameToId(x.node.supplier)})"
+          v-bind:style="{ 'transition-delay': index * 100 + 'ms' }"
           class="sidebar__item">
         {{ x.node.supplier }}
       </div>
@@ -14,8 +16,9 @@
 <script>
 import transformNameToId from '../services/transformNameToId';
 
-const isArmSaleValid = ({ data, supplier }) => {
-  const isNotEmpty = data !== "" && data !== "0";
+const isArmSaleValid = (node, activeYear) => {
+  const { supplier } = node;
+  const isNotEmpty = node[activeYear] !== "" && node[activeYear] !== "0";
   const isValidCountry = !supplier.startsWith('Unknown') && supplier !== 'Total' && supplier !== 'Others';
   return isNotEmpty && isValidCountry;
 }
@@ -25,22 +28,36 @@ export default {
   computed: {
     activeCountry () {
 	    return this.$store.state.activeCountry
+    },
+    activeYear () {
+      return this.$store.state.activeYear
     }
   },
   data() {
     return {
-      armSales: this.$parent.$static.armSales.edges.filter(x => isArmSaleValid(x.node)),
+      armSales: this.$parent.$static.armSales.edges
+        .filter(x => isArmSaleValid(x.node, this.activeYear))
+        .sort((a, b) => b[this.activeYear] - a[this.activeYear]),
       transformNameToId,
     }
   },
   methods: {
     setActiveCountry(payload) {
       this.$store.commit('setActiveCountry', payload)
-    }
+    },
   },
   watch: {
     activeCountry (country) {
       this.$el.querySelector(`#${country.id}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    },
+    activeYear (year) {
+      this.$el.classList.remove('show');
+      this.armSales = this.$parent.$static.armSales.edges
+        .filter(x => isArmSaleValid(x.node, year))
+        .sort((a, b) => b.node[year] - a.node[year]);
+      setTimeout(() => {
+        this.$el.classList.add('show');
+      })
     }
   }
 }
@@ -49,7 +66,8 @@ export default {
 <style scoped>
 .container {
   max-height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   width: 25%;
   margin: 0;
   list-style: none;
@@ -67,10 +85,28 @@ export default {
   padding: 20px;
   border: solid 1px black;
   cursor: pointer;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.2s ease-in-out;
+  transition: none;
+}
+.show .sidebar__item {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.2s ease-in-out;
 }
 .sidebar__item.active,
 .sidebar__item:hover {
   color: white;
   background: black;
+}
+</style>
+
+<style>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
