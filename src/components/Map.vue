@@ -1,10 +1,13 @@
 <template>
   <section id="map" class="container map">
-    <select @change="setActiveYear($event)">
-      <option v-for="y in armSalesYears" v-bind:key="y.id" v-bind:value="y.node.value">
-        {{ y.node.value.replace('_', '') }}
-      </option>
-    </select>
+    <div class="select-wrapper">
+      <label class="label" for="year-select">Current year</label>
+      <select id="year-select" @change="setActiveYear($event)" class="select">
+        <option v-for="y in armSalesYears" v-bind:key="y.id" v-bind:value="y.node.value">
+          {{ y.node.value.replace('_', '') }}
+        </option>
+      </select>
+    </div>
   </section>
 </template>
 
@@ -67,8 +70,8 @@ export default {
                     .append("svg")
                     .attr("viewBox", "50 10 " + width + " " + height)
                     .attr("preserveAspectRatio", "xMinYMin");
-
-      this.g = this.svg.call(zoom).append("g");
+      const g = this.svg.call(zoom).append("g");
+      this.g = g;
     },
     addMapLayers() {
       const features = topojson.feature(world.default, world.default.objects.countries).features;
@@ -123,12 +126,35 @@ export default {
 </script>
 
 <style scoped>
+.label {
+  display: block;
+  text-transform: uppercase;
+}
+.select-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 15px 40px;
+  background-color: #000;
+  color: #fff;
+  font-size: 30px;
+  border-radius: 0;
+}
+.select:hover {
+  cursor: pointer;
+}
 .container {
   text-align: center;
   width: 75%;
   height: 100vh;
   overflow: hidden;
   cursor: move;
+  position: relative;
 }
 </style>
 

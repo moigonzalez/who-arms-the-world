@@ -1,11 +1,12 @@
 <template>
   <ol id="sidebar" class="container show">
     <li v-for="(x, index) in armSales"
+        class="sidebar__li"
+        v-bind:style="{ 'transition-delay': index * 100 + 'ms' }"
         v-bind:key="x.node.id">
       <div v-bind:id="transformNameToId(x.node.supplier)"
           v-bind:class="{active: activeCountry.id === transformNameToId(x.node.supplier)}"
           @click="setActiveCountry({...x.node, id: transformNameToId(x.node.supplier)})"
-          v-bind:style="{ 'transition-delay': index * 100 + 'ms' }"
           class="sidebar__item">
         {{ x.node.supplier }}
       </div>
@@ -80,17 +81,21 @@ export default {
   background-color: black;
   color: white;
   padding: 5px 10px;
+  transition: all 0.2s ease-in-out;
 }
 .sidebar__item {
   padding: 20px;
   border: solid 1px black;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.sidebar__li {
   opacity: 0;
   transform: translateX(10px);
   transition: all 0.2s ease-in-out;
   transition: none;
 }
-.show .sidebar__item {
+.show .sidebar__li {
   opacity: 1;
   transform: translateX(0);
   transition: all 0.2s ease-in-out;
@@ -99,6 +104,12 @@ export default {
 .sidebar__item:hover {
   color: white;
   background: black;
+}
+
+.sidebar__item.active:before,
+.sidebar__item:hover:before {
+  background-color: white;
+  color: black;
 }
 </style>
 

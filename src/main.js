@@ -19,6 +19,7 @@ export default function (Vue, { router, head, isClient, appOptions }) {
         state.activeCountry = payload;
       },
       setActiveYear (state, payload) {
+        state.activeCountry = {};
         state.activeYear = payload;
       }
     }
