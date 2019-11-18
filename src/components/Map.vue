@@ -144,6 +144,7 @@ export default {
   color: #fff;
   font-size: 30px;
   border-radius: 0;
+  border: solid 1px white;
 }
 .select:hover {
   cursor: pointer;
