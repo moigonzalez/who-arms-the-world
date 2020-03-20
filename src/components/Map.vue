@@ -162,7 +162,7 @@ export default {
 <style>
 .circle {
   fill: #cc2800;
-  stroke: #881b00;
+  stroke: black;
   cursor: pointer;
   transition: 0.2s ease-in-out fill;
 }
@@ -173,6 +173,6 @@ export default {
   cursor: pointer;
 }
 .circle_active {
-  fill: #881b00;
+  fill: #ff8906;
 }
 </style>

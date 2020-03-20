@@ -49,7 +49,7 @@ export default {
   },
   watch: {
     activeCountry (country) {
-      this.$el.querySelector(`#${country.id}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      this.$el.querySelector(`#${country.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     },
     activeYear (year) {
       this.$el.classList.remove('show');

@@ -15,7 +15,7 @@ const getArmSales = async (api) => {
   api.loadSource(async ({ addCollection }) => {
     const { data } = await axios(`${GSON}${GOOGLE_SHEETS_URL_ARMS}`);
     const countryData = await axios(`${GSON}${GOOGLE_SHEETS_URL_COUNTRIES}`);
-    const YEARS = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018];
+    const YEARS = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019];
 
 
     const collection = addCollection('ArmSales');
@@ -33,8 +33,9 @@ const getArmSales = async (api) => {
         '2017': el['2017'],
         '2018': el['2018'],
         '2018': el['2018'],
-        '2010-2018': el['2010-2018'],
-        data: el['2018'],
+        '2019': el['2019'],
+        '2010-2019': el['2010-2019'],
+        data: el['2019'],
         supplier: el.Supplier,
         country: countryData.data.filter(x => x.name === el.Supplier)[0]
       })
