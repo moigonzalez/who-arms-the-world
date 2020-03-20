@@ -4,7 +4,7 @@
     <div class="wrapper">
       <h1>Sources</h1>
       <p>Data comes from the Stockholm International Peace Research Institute (SIPRI)</p>
-      <p>The gathered data shows the amount of arm exports for the year 2018</p>
+      <p>The gathered data shows the amount of arm exports for the period 2010 - 2019</p>
       <p><a
         href="https://sipri.org/databases/armstransfers"
         target="_blank" rel="noopener noreferrer">
@@ -39,5 +39,6 @@ export default {
 }
 .wrapper {
   text-align: center;
+  padding: 20px;
 }
 </style>

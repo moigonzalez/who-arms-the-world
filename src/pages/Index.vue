@@ -12,7 +12,7 @@ import Sources from '../components/Sources';
 export default {
   metaInfo: {
     title: 'WHO ARMS THE WORLD?',
-    description: 'Visualization of countries profiting from war'
+    description: 'Visualization of countries profiting from war',
   },
   components: {
     MapContainer,
