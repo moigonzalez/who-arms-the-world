@@ -87,6 +87,17 @@ export default {
     addMapCircles(field) {
       const armSales = this.$parent.$static.armSales.edges;
 
+      const armSalesValues = armSales.map(x => x.node[field]);
+
+      const min = Math.min(...armSalesValues);
+      const max = Math.max(...armSalesValues);
+
+      // Make circles grow linearly instead of quadraticly
+      // https://www.d3indepth.com/scales/
+      const myScale = d3.scaleSqrt()
+                          .domain([min, max])
+                          .range([min, max]);
+
       armSales.forEach(x => {
         if (x.node.country === null || x.node[field] === '') {
           return;
@@ -108,7 +119,7 @@ export default {
           })
           .transition()
           .duration(1000)
-          .attr("r", x.node[field] / 140)
+          .attr("r", myScale(x.node[field]) / 400)
       });
     }
   },
