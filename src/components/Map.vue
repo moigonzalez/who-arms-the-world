@@ -69,6 +69,7 @@ export default {
       this.svg = d3.select(this.$el)
                     .append("svg")
                     .attr("viewBox", "50 10 " + width + " " + height)
+                    .attr("style", width < 760 ? "transform: translateY(-30%)" : '')
                     .attr("preserveAspectRatio", "xMinYMin");
       const g = this.svg.call(zoom).append("g");
       this.g = g;
@@ -134,6 +135,8 @@ export default {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  background-color: white;
+  z-index: 9;
 }
 .select {
   -webkit-appearance: none;
@@ -156,6 +159,13 @@ export default {
   overflow: hidden;
   cursor: move;
   position: relative;
+}
+
+@media (max-width: 760px) {
+  .container {
+    width: 100%;
+    height: calc(100vh - 66px);
+  }
 }
 </style>
 

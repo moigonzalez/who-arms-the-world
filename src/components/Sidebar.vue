@@ -111,6 +111,25 @@ export default {
   background-color: white;
   color: black;
 }
+
+@media (max-width: 760px) {
+  .container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    height: 66px;
+    display: flex;
+    background: white;
+    overflow: auto;
+  }
+
+  .sidebar__item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 116px;
+  }
+}
 </style>
 
 <style>
