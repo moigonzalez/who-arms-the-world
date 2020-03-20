@@ -69,7 +69,7 @@ export default {
       this.svg = d3.select(this.$el)
                     .append("svg")
                     .attr("viewBox", "50 10 " + width + " " + height)
-                    .attr("style", width < 760 ? "transform: translateY(-66px)" : '')
+                    .attr("style", width < 760 ? "transform: translateY(-160px)" : '')
                     .attr("preserveAspectRatio", "xMinYMin");
       const g = this.svg.call(zoom).append("g");
       this.g = g;

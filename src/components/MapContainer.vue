@@ -69,5 +69,7 @@ export default {
 <style scoped>
 .sectionContainer {
   display: flex;
+  position: relative;
+  height: 100vh;
 }
 </style>
