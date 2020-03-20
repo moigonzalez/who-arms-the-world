@@ -14,7 +14,7 @@ export default {
     title: 'WHO ARMS THE WORLD?',
     description: 'Visualization of countries profiting from war',
     meta: [
-      { key: 'theme-color', content: '#000000' }
+      { key: 'theme-color', name: 'theme-color', content: '#000000' }
     ]
   },
   components: {
