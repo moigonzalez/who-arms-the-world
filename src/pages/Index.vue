@@ -13,6 +13,9 @@ export default {
   metaInfo: {
     title: 'WHO ARMS THE WORLD?',
     description: 'Visualization of countries profiting from war',
+    meta: [
+      { key: 'theme-color', content: '#000000' }
+    ]
   },
   components: {
     MapContainer,
