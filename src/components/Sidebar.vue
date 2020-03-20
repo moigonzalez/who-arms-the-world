@@ -74,6 +74,7 @@ export default {
   list-style: none;
   padding: 0;
   counter-reset: sidebar;
+  border-left: solid 1px black;
 }
 .sidebar__item:before {
   content: counter(sidebar);
@@ -102,16 +103,8 @@ export default {
 }
 .sidebar__item.active,
 .sidebar__item:hover {
-  color: white;
-  background: black;
+  background: #ff8906;
 }
-
-.sidebar__item.active:before,
-.sidebar__item:hover:before {
-  background-color: white;
-  color: black;
-}
-
 @media (max-width: 760px) {
   .container {
     position: absolute;
