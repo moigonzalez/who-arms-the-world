@@ -87,7 +87,7 @@ export default {
     addMapCircles(field) {
       const armSales = this.$parent.$static.armSales.edges;
 
-      const armSalesValues = armSales.map(x => x.node[field]);
+      const armSalesValues = armSales.map(x => x.node.country === null || x.node[field] === '' ? null : x.node[field]);
 
       const min = Math.min(...armSalesValues);
       const max = Math.max(...armSalesValues);
@@ -119,7 +119,7 @@ export default {
           })
           .transition()
           .duration(1000)
-          .attr("r", myScale(x.node[field]) / 400)
+          .attr("r", myScale(x.node[field]) / 250)
       });
     }
   },

@@ -37,8 +37,8 @@ export default {
   data() {
     return {
       armSales: this.$parent.$static.armSales.edges
-        .filter(x => isArmSaleValid(x.node, this.activeYear))
-        .sort((a, b) => b[this.activeYear] - a[this.activeYear]),
+        .filter(x => isArmSaleValid(x.node, this.$store.state.activeYear))
+        .sort((a, b) => b[this.$store.state.activeYear] - a[this.$store.state.activeYear]),
       transformNameToId,
     }
   },
