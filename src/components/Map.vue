@@ -92,7 +92,7 @@ export default {
       const min = Math.min(...armSalesValues);
       const max = Math.max(...armSalesValues);
 
-      // Make circles grow linearly instead of quadraticly
+      // Make circles grow linearly instead of quadratically
       // https://www.d3indepth.com/scales/
       const myScale = d3.scaleSqrt()
                           .domain([min, max])
