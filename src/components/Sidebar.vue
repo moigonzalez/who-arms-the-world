@@ -116,7 +116,7 @@ export default {
   .container {
     position: absolute;
     width: 100%;
-    bottom: 0;
+    bottom: 60px;
     height: 66px;
     display: flex;
     background: white;
